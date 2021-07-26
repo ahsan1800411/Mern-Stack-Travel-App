@@ -7,6 +7,7 @@ import { format } from "timeago.js";
 
 function App() {
   const [pins, setPins] = useState([]);
+  const [currentPlaceId, setCurrentPlaceId] = useState(null);
   const [viewport, setViewport] = useState({
     width: "100vw",
     height: "100vh",
@@ -22,6 +23,11 @@ function App() {
     };
     getPins();
   }, []);
+
+  const handleMarkerClick = (id) => {
+    setCurrentPlaceId(id);
+  };
+
   return (
     <ReactMapGL
       {...viewport}
@@ -39,36 +45,40 @@ function App() {
               offsetTop={-10}
             >
               <Room
+                onClick={() => handleMarkerClick(pin._id)}
                 style={{ fontSize: viewport.zoom * 7, color: "slateblue" }}
               />
             </Marker>
-            <Popup
-              latitude={pin.latitude}
-              longitude={pin.longitude}
-              closeButton={true}
-              closeOnClick={false}
-              anchor='left'
-            >
-              <div className='card'>
-                <label>Place:</label>
-                <h4 className='place'>{pin.title}</h4>
-                <label>Review:</label>
-                <p className='desc'> {pin.description} </p>
-                <label>Rating:</label>
-                <div className='stars'>
-                  <Star className='star' />
-                  <Star className='star' />
-                  <Star className='star' />
-                  <Star className='star' />
-                  <Star className='star' />
+            {pin._id === currentPlaceId && (
+              <Popup
+                latitude={pin.latitude}
+                longitude={pin.longitude}
+                closeButton={true}
+                closeOnClick={false}
+                anchor='left'
+                onClose={() => setCurrentPlaceId(null)}
+              >
+                <div className='card'>
+                  <label>Place:</label>
+                  <h4 className='place'>{pin.title}</h4>
+                  <label>Review:</label>
+                  <p className='desc'> {pin.description} </p>
+                  <label>Rating:</label>
+                  <div className='stars'>
+                    <Star className='star' />
+                    <Star className='star' />
+                    <Star className='star' />
+                    <Star className='star' />
+                    <Star className='star' />
+                  </div>
+                  <label>Information:</label>
+                  <span className='username'>
+                    Created by: <strong>{pin.name}</strong>{" "}
+                  </span>
+                  <span className='date'>{format(pin.createdAt)}</span>
                 </div>
-                <label>Information:</label>
-                <span className='username'>
-                  Created by: <strong>{pin.name}</strong>{" "}
-                </span>
-                <span className='date'>{format(pin.createdAt)}</span>
-              </div>
-            </Popup>
+              </Popup>
+            )}
           </>
         );
       })}
