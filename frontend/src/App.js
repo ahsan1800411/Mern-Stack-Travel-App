@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactMapGL, { Marker, Popup } from "react-map-gl";
 import { Room, Star } from "@material-ui/icons";
 import "./App.css";
+import axios from "axios";
+import { format } from "timeago.js";
 
 function App() {
+  const [pins, setPins] = useState([]);
   const [viewport, setViewport] = useState({
     width: "100vw",
     height: "100vh",
@@ -12,6 +15,13 @@ function App() {
     zoom: 4,
   });
 
+  useEffect(() => {
+    const getPins = async () => {
+      const { data } = await axios.get("/pins");
+      setPins(data);
+    };
+    getPins();
+  }, []);
   return (
     <ReactMapGL
       {...viewport}
@@ -19,41 +29,49 @@ function App() {
       onViewportChange={(nextViewport) => setViewport(nextViewport)}
       mapStyle='mapbox://styles/safak/cknndpyfq268f17p53nmpwira'
     >
-      <Marker
-        latitude={48.858093}
-        longitude={2.294694}
-        offsetLeft={-20}
-        offsetTop={-10}
-      >
-        <Room style={{ fontSize: viewport.zoom * 7, color: "slateblue" }} />
-      </Marker>
-      <Popup
-        latitude={48.858093}
-        longitude={2.294694}
-        closeButton={true}
-        closeOnClick={false}
-        anchor='left'
-      >
-        <div className='card'>
-          <label>Place:</label>
-          <h4 className='place'>Eiffel Tower</h4>
-          <label>Review:</label>
-          <p className='desc'> Beautiful Place, I like the most</p>
-          <label>Rating:</label>
-          <div className='stars'>
-            <Star className='star' />
-            <Star className='star' />
-            <Star className='star' />
-            <Star className='star' />
-            <Star className='star' />
-          </div>
-          <label>Information:</label>
-          <span className='username'>
-            Created by: <strong>Ahsan Mumtaz</strong>{" "}
-          </span>
-          <span className='date'>1 hour ago</span>
-        </div>
-      </Popup>
+      {pins.map((pin) => {
+        return (
+          <>
+            <Marker
+              latitude={pin.latitude}
+              longitude={pin.longitude}
+              offsetLeft={-20}
+              offsetTop={-10}
+            >
+              <Room
+                style={{ fontSize: viewport.zoom * 7, color: "slateblue" }}
+              />
+            </Marker>
+            <Popup
+              latitude={pin.latitude}
+              longitude={pin.longitude}
+              closeButton={true}
+              closeOnClick={false}
+              anchor='left'
+            >
+              <div className='card'>
+                <label>Place:</label>
+                <h4 className='place'>{pin.title}</h4>
+                <label>Review:</label>
+                <p className='desc'> {pin.description} </p>
+                <label>Rating:</label>
+                <div className='stars'>
+                  <Star className='star' />
+                  <Star className='star' />
+                  <Star className='star' />
+                  <Star className='star' />
+                  <Star className='star' />
+                </div>
+                <label>Information:</label>
+                <span className='username'>
+                  Created by: <strong>{pin.name}</strong>{" "}
+                </span>
+                <span className='date'>{format(pin.createdAt)}</span>
+              </div>
+            </Popup>
+          </>
+        );
+      })}
     </ReactMapGL>
   );
 }
