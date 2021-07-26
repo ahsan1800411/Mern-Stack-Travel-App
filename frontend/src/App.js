@@ -13,6 +13,7 @@ function App() {
   return (
     <ReactMapGL
       {...viewport}
+      mapboxApiAccessToken={process.env.REACT_APP_MAPBOX}
       onViewportChange={(nextViewport) => setViewport(nextViewport)}
     />
   );
