@@ -8,6 +8,7 @@ import { format } from "timeago.js";
 function App() {
   const [pins, setPins] = useState([]);
   const [currentPlaceId, setCurrentPlaceId] = useState(null);
+  const [newPlace, setNewPlace] = useState(null);
   const [viewport, setViewport] = useState({
     width: "100vw",
     height: "100vh",
@@ -27,6 +28,13 @@ function App() {
   const handleMarkerClick = (id) => {
     setCurrentPlaceId(id);
   };
+  const handleClick = (e) => {
+    const [lang, lat] = e.lngLat;
+    setNewPlace({
+      lang,
+      lat,
+    });
+  };
 
   return (
     <ReactMapGL
@@ -34,6 +42,7 @@ function App() {
       mapboxApiAccessToken={process.env.REACT_APP_MAPBOX}
       onViewportChange={(nextViewport) => setViewport(nextViewport)}
       mapStyle='mapbox://styles/safak/cknndpyfq268f17p53nmpwira'
+      onDblClick={handleClick}
     >
       {pins.map((pin) => {
         return (
@@ -46,7 +55,11 @@ function App() {
             >
               <Room
                 onClick={() => handleMarkerClick(pin._id)}
-                style={{ fontSize: viewport.zoom * 7, color: "slateblue" }}
+                style={{
+                  fontSize: viewport.zoom * 7,
+                  color: "slateblue",
+                  cursor: "pointer",
+                }}
               />
             </Marker>
             {pin._id === currentPlaceId && (
@@ -82,6 +95,16 @@ function App() {
           </>
         );
       })}
+      {newPlace && (
+        <Popup
+          latitude={setNewplace.lat}
+          longitude={setNewPlace.long}
+          closeButton={true}
+          closeOnClick={false}
+          anchor='left'
+          onClose={() => setNewPlace(null)}
+        />
+      )}
     </ReactMapGL>
   );
 }
