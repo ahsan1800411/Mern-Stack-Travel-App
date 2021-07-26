@@ -35,11 +35,11 @@ function App() {
         anchor='left'
       >
         <div className='card'>
-          <label>Place</label>
+          <label>Place:</label>
           <h4 className='place'>Eiffel Tower</h4>
-          <label>Review</label>
+          <label>Review:</label>
           <p className='desc'> Beautiful Place, I like the most</p>
-          <label>Rating</label>
+          <label>Rating:</label>
           <div className='stars'>
             <Star className='star' />
             <Star className='star' />
@@ -47,9 +47,9 @@ function App() {
             <Star className='star' />
             <Star className='star' />
           </div>
-          <label>Information</label>
+          <label>Information:</label>
           <span className='username'>
-            Created by <strong>Ahsan Mumtaz</strong>{" "}
+            Created by: <strong>Ahsan Mumtaz</strong>{" "}
           </span>
           <span className='date'>1 hour ago</span>
         </div>
